@@ -22,6 +22,8 @@ cd $ext_path
 # 删除编译目录
 rm -rf $compile_path
 
+exit
+
 # 运行PHP
 echo ""
 echo ""
