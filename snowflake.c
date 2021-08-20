@@ -8,15 +8,16 @@
 #include "ext/standard/info.h"
 #include "php_snowflake.h"
 
+#include "unistd.h"
+
 ZEND_DECLARE_MODULE_GLOBALS(snowflake)
 
 /* True global resources - no need for thread safety here */
 // static int le_snowflake;
 
-
 /* 获取毫秒时间戳
  */
-long get_timestamp()
+long sf_get_timestamp()
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
@@ -53,18 +54,18 @@ PHP_MINIT_FUNCTION(snowflake)
 {
 	REGISTER_INI_ENTRIES();
 
-	snowflake_globals.last_timestamp_ce = (long *)pemalloc(sizeof(long), 1);
-	*snowflake_globals.last_timestamp_ce = 0;
-	snowflake_globals.sequence_ce = (int *)pemalloc(sizeof(int), 1);
-	*snowflake_globals.sequence_ce = 0;
-	snowflake_globals.run_lock = (int *)pemalloc(sizeof(1), 1);
-	*snowflake_globals.run_lock = 0;
+	SF_G(last_timestamp_ce) = (long *)pemalloc(sizeof(long), 1);
+	*SF_G(last_timestamp_ce) = 0;
+	SF_G(sequence_ce) = (int *)pemalloc(sizeof(int), 1);
+	*SF_G(sequence_ce) = 0;
+	SF_G(run_lock) = (int *)pemalloc(sizeof(1), 1);
+	*SF_G(run_lock) = 0;
 
 	snowflake_minit(
-		snowflake_globals.data_center_id_bits,
-		snowflake_globals.worker_id_bits,
-		snowflake_globals.sequence_bits,
-		snowflake_globals.start_timestamp
+		SF_G(data_center_id_bits),
+		SF_G(worker_id_bits),
+		SF_G(sequence_bits),
+		SF_G(start_timestamp)
 		);
 
 	return SUCCESS;
@@ -75,12 +76,12 @@ PHP_MINIT_FUNCTION(snowflake)
  */
 PHP_MSHUTDOWN_FUNCTION(snowflake)
 {
-	pefree(snowflake_globals.last_timestamp_ce, 1);
-	snowflake_globals.last_timestamp_ce = NULL;
-	pefree(snowflake_globals.sequence_ce, 1);
-	snowflake_globals.sequence_ce = NULL;
-	pefree(snowflake_globals.run_lock, 1);
-	snowflake_globals.run_lock = NULL;
+	pefree(SF_G(last_timestamp_ce), 1);
+	SF_G(last_timestamp_ce) = NULL;
+	pefree(SF_G(sequence_ce), 1);
+	SF_G(sequence_ce) = NULL;
+	pefree(SF_G(run_lock), 1);
+	SF_G(run_lock) = NULL;
 
 	UNREGISTER_INI_ENTRIES();
 	return SUCCESS;
@@ -155,7 +156,11 @@ zend_module_entry snowflake_module_entry = {
 	PHP_RSHUTDOWN(snowflake),	/* Replace with NULL if there's nothing to do at request end */
 	PHP_MINFO(snowflake),
 	PHP_SNOWFLAKE_VERSION,
-	STANDARD_MODULE_PROPERTIES
+	PHP_MODULE_GLOBALS(snowflake),
+	NULL,
+	NULL,
+	NULL,
+	STANDARD_MODULE_PROPERTIES_EX
 };
 /* }}} */
 

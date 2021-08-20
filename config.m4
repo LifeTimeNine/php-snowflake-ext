@@ -7,10 +7,10 @@ dnl without editing.
 
 dnl If your extension references something external, use with:
 
-dnl PHP_ARG_WITH(snowflake, for snowflake support,
-dnl Make sure that the comment is aligned:
-dnl [  --with-snowflake             Include snowflake support])
-
+PHP_ARG_WITH(snowflake, for snowflake support,
+Make sure that the comment is aligned:
+ [  --with-snowflake             Include snowflake support]
+ )
 dnl Otherwise use enable:
 
 PHP_ARG_ENABLE(snowflake, whether to enable snowflake support,

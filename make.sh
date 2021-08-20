@@ -13,16 +13,18 @@ cp -rf $ext_path $compile_path
 cd $compile_path
 # 编译
 $phpize_path
-./configure --with-php-config=$phpconfig_path
+./configure --with-php-config=$phpconfig_path --enable-debug --enable-maintainer-zts
 make && make install
-# PHP服务重载
-/etc/init.d/php-fpm-71 reload
+# PHP 服务重启
+/etc/init.d/php-fpm-71 restart
+# Nginx 服务重启
+/etc/init.d/nginx restart
 # 切换至当前目录
 cd $ext_path
 # 删除编译目录
 rm -rf $compile_path
 
-exit
+# exit
 
 # 运行PHP
 echo ""

@@ -35,7 +35,7 @@ ZEND_END_MODULE_GLOBALS(snowflake)
    You are encouraged to rename these macros something shorter, see
    examples in any other php module directory.
 */
-#define SNOWFLAKE_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(snowflake, v)
+#define SF_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(snowflake, v)
 
 #if defined(ZTS) && defined(COMPILE_DL_SNOWFLAKE)
 ZEND_TSRMLS_CACHE_EXTERN()
